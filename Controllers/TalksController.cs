@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace CoreCodeCamp.Controllers
 {
     [ApiController]
+    //[ApiVersion("2.0")]
     [Route("api/camps/{moniker}/talks")]
     public class TalksController : Controller
     {
@@ -48,6 +49,24 @@ namespace CoreCodeCamp.Controllers
         {
             try
             {
+                var talks = await campRepository.GetTalkByMonikerAsync(moniker, id);
+                if (talks is null) return NotFound("No talk is found");
+
+                return Mapper.Map<TalkModel>(talks);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Bad DataBase");
+            }
+        }
+
+
+        [HttpGet("{id:int}")]
+        [MapToApiVersion("1.5")]
+        public async Task<ActionResult<TalkModel>> Get15(string moniker, int id)
+        {
+            try
+            {
                 var talks = await campRepository.GetTalkByMonikerAsync(moniker, id, true);
                 if (talks is null) return NotFound("No talk is found");
 
@@ -58,6 +77,7 @@ namespace CoreCodeCamp.Controllers
                 return StatusCode(500, "Bad DataBase");
             }
         }
+
 
         [HttpPost]
         public async Task<ActionResult<TalkModel>> Post(string moniker, TalkModel model)
@@ -147,5 +167,6 @@ namespace CoreCodeCamp.Controllers
             }
         }
 
+         
     }
 }

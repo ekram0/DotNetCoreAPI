@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using CoreCodeCamp.Controllers;
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +26,19 @@ namespace CoreCodeCamp
             //services.AddDbContext<CampContext>(sp => sp.UseSqlServer(Configuration.GetConnectionString("CodeCamp")));
 
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddApiVersioning(opt =>
+            {
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
+                opt.ReportApiVersions = true;
+                opt.Conventions.Controller<TalksController>()
+                .HasApiVersion(new ApiVersion(2, 0));
+                //opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+                //opt.ApiVersionReader = ApiVersionReader.Combine(
+                //     new QueryStringApiVersionReader("v","ver"),
+                //     new HeaderApiVersionReader("v")
+                //    );
+            });
 
             services.AddHttpContextAccessor();
 
